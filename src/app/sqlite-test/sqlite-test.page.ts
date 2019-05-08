@@ -83,34 +83,51 @@ export class SqliteTestPage implements OnInit {
       // setTimeout(() => {
       this.map = GoogleMaps.create(this.mapElement.nativeElement, this.mapOptions);
       const layer = this.map.addTileOverlay({
-        // zIndex: idx,
         getTile: (x: number, y: number, zoom: number) => {
-          const tileData = this.fetchTilesFromDB(db, x, y, zoom);
-          console.log('TileData ' + tileData);
-          return this.fetchTilesFromDB(db, x, y, zoom);
-          // return `http://tile.stamen.com/watercolor/${zoom}/${x}/${y}.jpg`;
+          // const tileData = this.fetchTilesFromDB(db, x, y, zoom);
+          // console.log('TileData ' + tileData);
+          // return new Promise(function(resolve, reject) {
+          //   this.fetchTilesFromDB(db, x, y, zoom);
+          // });
+          return `http://tile.stamen.com/watercolor/${zoom}/${x}/${y}.jpg`;
         }
+      }).then((result) => {
+
+          // return new Promise(function(resolve, reject) {
+          //           this.fetchTilesFromDB(db, x, y, zoom);
+          //         });
+          // }
+          // zIndex: idx,
+
+          // getTile: (x: number, y: number, zoom: number) => {
+          //   // const tileData = this.fetchTilesFromDB(db, x, y, zoom);
+          //   // console.log('TileData ' + tileData);
+          //   // return new Promise(function(resolve, reject) {
+          //   //   this.fetchTilesFromDB(db, x, y, zoom);
+          //   // });
+          // return `http://tile.stamen.com/watercolor/${zoom}/${x}/${y}.jpg`;
+
       });
       this.layers.push(layer);
       // }, 3000);
     }
 
 
-    fetchTilesFromDB(db: SQLiteObject, x: number, y: number, zoom: number): Promise<string> {
+    fetchTilesFromDB(db: SQLiteObject, x: number, y: number, zoom: number) {
       const newY = (1 << zoom) - y - 1;
-      return db.executeSql('SELECT hex(tile_data) AS data FROM tiles WHERE\
-        tile_row = ' + newY + ' and tile_column = ' + x + ' and zoom_level = ' + zoom + '', [])
-        .then((resultSet) => {
-          const blob = resultSet.rows.item(0).data;
-          let bString = '';
-          for (let i = 0; i < blob.length; i += 2) {
-            bString += String.fromCharCode( parseInt( blob.substr( i, 2), 16));
-          }
-          const base64 = Base64.encode(bString);
-          console.log('base64 ' + base64);
-          return base64;
-        })
-        .catch(e => console.log(e));
+      db.executeSql('SELECT hex(tile_data) AS data FROM tiles WHERE\
+      tile_row = ' + newY + ' and tile_column = ' + x + ' and zoom_level = ' + zoom + '', [])
+      .then((resultSet) => {
+        const blob = resultSet.rows.item(0).data;
+        let bString = '';
+        for (let i = 0; i < blob.length; i += 2) {
+          bString += String.fromCharCode( parseInt( blob.substr( i, 2), 16));
+        }
+        const base64 = Base64.encode(bString);
+        console.log('base64 ' + base64);
+        return base64;
+      })
+      .catch(e => console.log(e));
     }
 
     ngOnInit() {
