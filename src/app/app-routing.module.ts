@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SQLite } from '@ionic-native/sqlite/ngx';
 import { SqliteDbCopy } from '@ionic-native/sqlite-db-copy/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 // const routes: Routes = [
   // { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -28,7 +29,8 @@ const routes: Routes = [
   providers: [
     SQLite,
     SqliteDbCopy,
-    Geolocation
+    Geolocation,
+    File
   ]
 })
 export class AppRoutingModule { }
