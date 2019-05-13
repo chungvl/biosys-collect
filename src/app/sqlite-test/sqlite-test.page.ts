@@ -6,7 +6,9 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import {
   GoogleMaps,
   GoogleMap,
-  GoogleMapsEvent
+  GoogleMapsEvent,
+  LatLng,
+  Marker
 } from '@ionic-native/google-maps';
 import * as Base64 from 'base-64';
 import { File } from '@ionic-native/file/ngx';
@@ -101,6 +103,17 @@ export class SqliteTestPage implements OnInit {
       this.map.animateCamera({
         target: {lat: -31.95224, lng: 115.8614},
         zoom: 5,
+      });
+      this.addMarker();
+    }
+
+    addMarker(){
+      this.map.addMarker({
+        position:  {lat: -31.95224, lng: 115.8614},
+        title: 'Marker Test',
+        animation: 'drop'
+      }).then((marker: Marker) => {
+        console.log('set marker');
       });
     }
 
