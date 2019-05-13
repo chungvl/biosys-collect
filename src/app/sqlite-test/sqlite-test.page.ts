@@ -104,16 +104,29 @@ export class SqliteTestPage implements OnInit {
         target: {lat: -31.95224, lng: 115.8614},
         zoom: 5,
       });
-      this.addMarker();
+      for(let i = 0; i <= 1000; i++){
+        const lat = this.getRandomArbitrary(-30, -33)
+        const lon = this.getRandomArbitrary(114, 117)
+        this.addMarker(lat, lon);
+      }
     }
-
-    addMarker(){
+// Just for testing Marker performance
+    getRandomArbitrary(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+    getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+/// END
+    addMarker(lat: number, lon: number){
       this.map.addMarker({
-        position:  {lat: -31.95224, lng: 115.8614},
+        position:  {lat: lat, lng: lon},
         title: 'Marker Test',
         animation: 'drop'
       }).then((marker: Marker) => {
-        console.log('set marker');
+        // console.log('set marker');
       });
     }
 
