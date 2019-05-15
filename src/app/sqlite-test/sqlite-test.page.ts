@@ -8,7 +8,8 @@ import {
   GoogleMap,
   GoogleMapsEvent,
   LatLng,
-  Marker
+  Marker,
+  MarkerCluster
 } from '@ionic-native/google-maps';
 import * as Base64 from 'base-64';
 import { File } from '@ionic-native/file/ngx';
@@ -92,7 +93,7 @@ export class SqliteTestPage implements OnInit {
       return await this.loading.present();
     }
 
-    loadMap(db: SQLiteObject) {
+    loadMap() {
       this.map = GoogleMaps.create(this.mapElement.nativeElement, this.mapOptions);
       const layer = this.map.addTileOverlay({
         getTile: (x: number, y: number, zoom: number) => {
@@ -104,13 +105,46 @@ export class SqliteTestPage implements OnInit {
         target: {lat: -31.95224, lng: 115.8614},
         zoom: 5,
       });
-      for(let i = 0; i <= 1000; i++){
+      const markerArray = [];
+      for(let i = 0; i <= 100; i++){
         const lat = this.getRandomArbitrary(-30, -33)
         const lon = this.getRandomArbitrary(114, 117)
-        this.addMarker(lat, lon);
+        markerArray.push(this.addMarker(lat, lon));
       }
+      // this.addCluster(markerArray);
     }
-// Just for testing Marker performance
+
+    addCluster(data) {
+      let markerCluster: MarkerCluster = this.map.addMarkerClusterSync({
+        markers: data,
+        icons: [
+          {
+            min: 3,
+            max: 9,
+            url: "./www/assets/markercluster/small.png",
+            label: {
+              color: "white"
+            }
+          },
+          {
+            min: 10,
+            url: "./www/assets/markercluster/large.png",
+            label: {
+              color: "white"
+            }
+          }
+        ]
+      });
+
+      markerCluster.on(GoogleMapsEvent.MARKER_CLICK).subscribe((params) => {
+        let marker: Marker = params[1];
+        marker.setTitle(marker.get("name"));
+        marker.setSnippet(marker.get("address"));
+        marker.showInfoWindow();
+      });
+
+    }
+    // Just for testing Marker performance
     getRandomArbitrary(min, max) {
       return Math.random() * (max - min) + min;
     }
@@ -119,14 +153,16 @@ export class SqliteTestPage implements OnInit {
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-/// END
+    /// END
     addMarker(lat: number, lon: number){
       this.map.addMarker({
         position:  {lat: lat, lng: lon},
-        title: 'Marker Test',
+        name: 'Marker Test',
         animation: 'drop'
       }).then((marker: Marker) => {
         // console.log('set marker');
+      }).catch((error) => {
+        console.log('Marker error '+ error);
       });
     }
 
@@ -164,7 +200,7 @@ export class SqliteTestPage implements OnInit {
           if (this.loading) {
             this.loading.dismiss();
           }
-          this.loadMap(db);
+          this.loadMap();
         }
       })
       .catch(e => console.log(e));
@@ -198,34 +234,47 @@ export class SqliteTestPage implements OnInit {
 
       this.platform.ready().then(() => {
         console.log('Platform ready');
-        this.sqliteDbCopy.copyDbFromStorage('countries-raster.mbtiles', 0,  './www/countries-raster.mbtiles', true).then((success) => {
+        // Define the name of the mbtiles database file that needs to get copied over
+        const database_name = 'greatsandydesert'; // greatsandydesert || countries-raster
+        this.sqliteDbCopy.copyDbFromStorage(database_name + '.mbtiles', 0,  './www/' + database_name + '.mbtiles', true).then((success) => {
           console.log('DB copied');
-          this.updateTiles();
+          this.fetchTiles(database_name);
         }).catch(e => console.log(e));
 
       });
     }
 
-    updateTiles() {
-      const sqlpromise = this.sqlite.create({ name: 'countries-raster.mbtiles', location: 'default', createFromLocation: 0 });
+    fetchTiles(dbName: string) {
+      const sqlpromise = this.sqlite.create({ name: dbName + '.mbtiles', location: 'default', createFromLocation: 0 });
       console.log('promise evalusetes to ' + String(sqlpromise));
 
       sqlpromise.then((db: SQLiteObject) => {
-        this.mapFileLocation = this.file.documentsDirectory + '/mapdata'
+        this.mapFileLocation = this.file.documentsDirectory + '/mapdata/' + dbName;
         this.file.createDir(this.file.documentsDirectory, 'mapdata', true).then(() => {
-          db.executeSql('SELECT count(*) AS dbCount FROM tiles', [])
-          .then((resultSet) => {
-            const dbCount = resultSet.rows.item(0).dbCount;
-            const offsetLimit = Math.ceil(dbCount / 5000);
-            this.presentLoading({
-              message: 'Loading map data...'
-            });
-            for(let i = 0; i <= offsetLimit; i++) {
-              console.log('extractTilesToFileSystem ', i);
-              this.extractTilesToFileSystem(db, i * 5000, dbCount, 5000);
+          console.log('createDir: ');
+          this.file.checkDir(this.file.documentsDirectory + '/mapdata/', dbName).then((exists) => {
+            if (exists == true) {
+              console.log('Tile data already copied - loading map');
+              this.loadMap();
             }
+          }).catch((e) => {
+            console.log('Tile data required to get copied...' + e);
+            this.file.createDir(this.file.documentsDirectory + 'mapdata/', dbName, true).then(() => {
+              db.executeSql('SELECT count(*) AS dbCount FROM tiles', [])
+              .then((resultSet) => {
+                const dbCount = resultSet.rows.item(0).dbCount;
+                const offsetLimit = Math.ceil(dbCount / 1000);
+                this.presentLoading({
+                  message: 'Loading map data...'
+                });
+                for(let i = 0; i <= offsetLimit; i++) {
+                  console.log('extractTilesToFileSystem ', i);
+                  this.extractTilesToFileSystem(db, i * 1000, dbCount, 1000);
+                }
+              });
+            });
           });
-        })
+        });
       });
     }
 
