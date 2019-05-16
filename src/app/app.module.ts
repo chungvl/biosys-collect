@@ -14,6 +14,7 @@ import { UploadService } from './shared/services/upload.service';
 import { APIService } from './biosys-core/services/api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MobileService } from './shared/services/mobile.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,7 +24,9 @@ import { MobileService } from './shared/services/mobile.service';
     IonicModule.forRoot(),
     AppRoutingModule,
     IonicStorageModule.forRoot(),
-    HttpClientModule],
+    HttpClientModule,
+    BrowserAnimationsModule
+  ],
   providers: [
     StatusBar,
     SplashScreen,

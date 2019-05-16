@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Select A Form:</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-virtual-scroll [items]="forms">
+        <ion-item *virtualItem="let item" (click)="formClicked(item)">
+            <ion-label>{{item.name}}</ion-label>
+        </ion-item>
+    </ion-virtual-scroll>
+
+
+    <!--<ion-button (click)="sitesClicked()" block class="fs-view-sites">View Sites</ion-button>-->
+    <ion-button (click)="uploadClicked()" block class="fs-view-sites">Upload</ion-button>
+</ion-content>

@@ -97,7 +97,6 @@ export class HomePage implements OnInit {
             state: {
                 datasetName: datasetName
             }
-            
         });
     }
 

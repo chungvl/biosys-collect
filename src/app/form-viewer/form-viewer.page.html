@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{formSchema.name}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <json-schema-form
+            style="height: 100%; width: 90%; left: 5%"
+            loadExternalAssets="true"
+            [schema]="formSchema.layout"
+            framework="bootstrap-4"
+            (onChanges)="onChanges($event)"
+            (onSubmit)="onSubmit($event)"
+            (isValid)="isValid($event)"
+            (validationErrors)="validationErrors($event)">
+    </json-schema-form>
+    <ion-item *ngIf="!formIsValid" lines="none" style="color: red; font-weight: bold">
+        <ion-label lines="none" text-wrap>{{validationErrorToDisplay}}</ion-label>
+    </ion-item>
+</ion-content>
