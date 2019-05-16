@@ -29,9 +29,6 @@ export class SqliteTestPage implements OnInit {
   map: GoogleMap;
   mapOptions: any;
   location = {lat: null, lng: null};
-  markerOptions: any = {position: null, map: null, title: null};
-  marker: any;
-  apiKey: any = 'AIzaSyBAL66QBq-RH9pStWPUMyTdm9t05QtUmXg';
   private loading: any;
   private mapFileLocation;
   layers = [];
@@ -71,6 +68,8 @@ export class SqliteTestPage implements OnInit {
           target: {lat: -31.95224, lng: 115.8614},
           zoom: 5,
         });
+
+        //TODO: Remove generating marker
         const markerArray = [];
         for(let i = 0; i <= 100; i++){
           const lat = this.getRandomArbitrary(-30, -33)
@@ -87,7 +86,7 @@ export class SqliteTestPage implements OnInit {
             {
               min: 2,
               max: 5,
-              url: "./www/assets/icon/m1.png",
+              url: "./assets/icon/m1.png",
               label: {
                 color: "white"
               }
@@ -95,7 +94,7 @@ export class SqliteTestPage implements OnInit {
             {
               min: 5,
               max: 10,
-              url: "./www/assets/icon/m2.png",
+              url: "./assets/icon/m2.png",
               label: {
                 color: "white"
               }
@@ -103,7 +102,7 @@ export class SqliteTestPage implements OnInit {
             {
               min: 10,
               max: 20,
-              url: "./www/assets/icon/m3.png",
+              url: "./assets/icon/m3.png",
               label: {
                 color: "white"
               }
@@ -111,7 +110,7 @@ export class SqliteTestPage implements OnInit {
             {
               min: 20,
               max: 50,
-              url: "./www/assets/icon/m4.png",
+              url: "./assets/icon/m4.png",
               label: {
                 color: "white"
               }
@@ -119,7 +118,7 @@ export class SqliteTestPage implements OnInit {
             {
               min: 50,
               max: 10000,
-              url: "./www/assets/icon/m5.png",
+              url: "./assets/icon/m5.png",
               label: {
                 color: "white"
               }
@@ -137,7 +136,7 @@ export class SqliteTestPage implements OnInit {
         });
       }
 
-      // Just for testing Marker performance
+      // TODO: Remove this - Just for testing Marker performance
       getRandomArbitrary(min, max) {
         return Math.random() * (max - min) + min;
       }
@@ -153,7 +152,7 @@ export class SqliteTestPage implements OnInit {
         this.platform.ready().then(() => {
           console.log('Platform ready');
           // Define the name of the mbtiles database file that needs to get copied over
-          const database_name = 'greatsandydesert'; // greatsandydesert || countries-raster
+          const database_name = 'countries-raster'; // greatsandydesert || countries-raster
           this.sqliteDbCopy.copyDbFromStorage(database_name + '.mbtiles', 0,  './www/' + database_name + '.mbtiles', true).then((success) => {
             console.log('DB copied');
             this.fetchTiles(database_name);
