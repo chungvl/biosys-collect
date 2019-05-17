@@ -3,6 +3,8 @@ import { MobileService } from '../shared/services/mobile.service';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { from } from 'rxjs';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 
 
 @Component({
@@ -16,7 +18,8 @@ export class ProjectSelectorPage implements OnInit {
   private loading: any;
 
   constructor(private loadingCtrl: LoadingController, private alertController: AlertController,
-              private router: Router, public mobileState: MobileService) {
+              private router: Router, public mobileState: MobileService,
+              private file: FilePath) {
   }
 
   ngOnInit() {}
@@ -70,7 +73,27 @@ export class ProjectSelectorPage implements OnInit {
             duration: 2000
           });
           await this.loading.present();
-          // TODO: perform caching action here
+
+          // projects should be saved to local storage here:
+          // this.mobileState.saveProjects();
+
+          await this.loading.dismiss();
+
+          // now iterate through and find mbtiles:
+          for (const proj in this.mobileState.projects) {
+            if (this.clickedStatus[proj]) {
+              this.loading = await this.loadingCtrl.create({
+                message: 'Loading MBtile for ' + proj.name,
+                duration: 2000
+              });
+
+              const url = proj.attributes.mbtile;
+              console.log('mbtile_url', url);
+              this.file.resolveNativePath()
+              //
+              return;
+            }
+          }
         }, 200);
         // Now we are clear to go offline
         this.mobileState.offlineToggle();
