@@ -17,7 +17,6 @@
         "@angular/cdk": "^7.3.7",
         "@angular/common": "^7.2.2",
         "@angular/core": "^7.2.2",
-        "@ionic-native/file": "^5.5.1",
         "@angular/flex-layout": "^7.0.0-beta.24",
         "@angular/forms": "^7.2.2",
         "@angular/http": "^7.2.2",
@@ -31,6 +30,8 @@
         "@fortawesome/free-solid-svg-icons": "^5.6.3",
         "@ionic-native/camera": "^5.3.0",
         "@ionic-native/core": "5.1.0",
+        "@ionic-native/dialogs": "latest",
+        "@ionic-native/file": "^5.5.1",
         "@ionic-native/geolocation": "^5.3.0",
         "@ionic-native/google-maps": "^5.5.0",
         "@ionic-native/splash-screen": "^5.0.0",
@@ -47,12 +48,11 @@
         "cordova-android": "7.1.4",
         "cordova-browser": "5.0.4",
         "cordova-ios": "5.0.0",
-        "cordova-browser": "5.0.4",
         "cordova-plugin-camera": "^4.0.3",
         "cordova-plugin-dbcopy": "~2.1.2",
         "cordova-plugin-device": "2.0.2",
-        "cordova-plugin-file": "6.0.1",
         "cordova-plugin-dialogs": "2.0.1",
+        "cordova-plugin-file": "6.0.1",
         "cordova-plugin-geolocation": "^4.0.1",
         "cordova-plugin-googlemaps": "git+https://github.com/mapsplugin/cordova-plugin-googlemaps.git",
         "cordova-plugin-ionic-keyboard": "^2.0.5",
@@ -67,9 +67,8 @@
         "rxjs": "~6.3.3",
         "rxjs-compat": "^6.4.0",
         "tableschema": "^1.9.1",
-        "zone.js": "~0.8.29",
         "uk.co.workingedge.cordova.plugin.sqliteporter": "1.1.0",
-        "@ionic-native/dialogs": "latest"
+        "zone.js": "~0.8.29"
     },
     "browser": {
         "fs": false,
@@ -126,10 +125,12 @@
                 "LOCATION_WHEN_IN_USE_DESCRIPTION": "This app wants to get your location while this app runs only.",
                 "LOCATION_ALWAYS_USAGE_DESCRIPTION": "This app wants to get your location always, even this app runs in background."
             },
-            "cordova-plugin-dialogs": {}
+            "cordova-plugin-dialogs": {},
+            "cordova-plugin-file": {}
         },
         "platforms": [
-            "browser"
+            "browser",
+            "ios"
         ]
     }
 }
