@@ -68,7 +68,9 @@
         "rxjs-compat": "^6.4.0",
         "tableschema": "^1.9.1",
         "uk.co.workingedge.cordova.plugin.sqliteporter": "1.1.0",
-        "zone.js": "~0.8.29"
+        "zone.js": "~0.8.29",
+        "@ionic-native/file-path": "latest",
+        "@ionic-native/file-transfer": "latest"
     },
     "browser": {
         "fs": false,

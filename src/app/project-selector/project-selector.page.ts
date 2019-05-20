@@ -80,8 +80,8 @@ export class ProjectSelectorPage implements OnInit {
           await this.loading.dismiss();
 
           // now iterate through and find mbtiles:
-          for (const proj in this.mobileState.projects) {
-            if (this.clickedStatus[proj]) {
+          for (const proj of this.mobileState.projects) {
+            if (this.clickedStatus[proj.name]) {
               this.loading = await this.loadingCtrl.create({
                 message: 'Loading MBtile for ' + proj.name,
                 duration: 2000
@@ -89,7 +89,7 @@ export class ProjectSelectorPage implements OnInit {
 
               const url = proj.attributes.mbtile;
               console.log('mbtile_url', url);
-              this.file.resolveNativePath()
+              // this.file.resolveNativePath()
               //
               return;
             }
