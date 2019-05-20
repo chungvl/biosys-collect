@@ -16,6 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MobileService } from './shared/services/mobile.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FilePath } from '@ionic-native/file-path/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -36,7 +37,8 @@ import { FilePath } from '@ionic-native/file-path/ngx';
     APIService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     MobileService,
-    FilePath
+    FilePath,
+    FileTransfer
   ],
   bootstrap: [AppComponent]
 })

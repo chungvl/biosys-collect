@@ -4,7 +4,8 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { from } from 'rxjs';
 import { FilePath } from '@ionic-native/file-path/ngx';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 
 @Component({
@@ -19,8 +20,10 @@ export class ProjectSelectorPage implements OnInit {
 
   constructor(private loadingCtrl: LoadingController, private alertController: AlertController,
               private router: Router, public mobileState: MobileService,
-              private file: FilePath) {
+              private transfer: FileTransfer, private file: File) {
   }
+
+  fileTransfer: FileTransferObject = this.transfer.create();
 
   ngOnInit() {}
 
@@ -47,8 +50,8 @@ export class ProjectSelectorPage implements OnInit {
     return;
   }
 
-  public projectToggle(project: any, isChecked: boolean) {
-    this.clickedStatus[project.name] = isChecked;
+  public projectToggle(project: any) {
+    this.clickedStatus[project.code] = !this.clickedStatus[project.code];
     return;
   }
 
@@ -81,14 +84,23 @@ export class ProjectSelectorPage implements OnInit {
 
           // now iterate through and find mbtiles:
           for (const proj of this.mobileState.projects) {
-            if (this.clickedStatus[proj.name]) {
+            if (this.clickedStatus[proj.code]) {
+
               this.loading = await this.loadingCtrl.create({
                 message: 'Loading MBtile for ' + proj.name,
                 duration: 2000
               });
 
-              const url = proj.attributes.mbtile;
-              console.log('mbtile_url', url);
+              if (proj.attributes != null) {
+                const url = proj.attributes.mbtile;
+                console.log('mbtile_url', url);
+                this.fileTransfer.download(url, this.file.documentsDirectory + '/mapdata/' + proj.code + '.mbtile').then((entry) => {
+                  console.log('download complete: ' + entry.toURL());
+
+                }, (error) => {
+                  console.log('download error ' + error);
+                });
+              }
               // this.file.resolveNativePath()
               //
               return;

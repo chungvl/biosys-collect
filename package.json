@@ -32,6 +32,8 @@
         "@ionic-native/core": "5.1.0",
         "@ionic-native/dialogs": "latest",
         "@ionic-native/file": "^5.5.1",
+        "@ionic-native/file-path": "latest",
+        "@ionic-native/file-transfer": "^5.6.0",
         "@ionic-native/geolocation": "^5.3.0",
         "@ionic-native/google-maps": "^5.5.0",
         "@ionic-native/splash-screen": "^5.0.0",
@@ -68,9 +70,7 @@
         "rxjs-compat": "^6.4.0",
         "tableschema": "^1.9.1",
         "uk.co.workingedge.cordova.plugin.sqliteporter": "1.1.0",
-        "zone.js": "~0.8.29",
-        "@ionic-native/file-path": "latest",
-        "@ionic-native/file-transfer": "latest"
+        "zone.js": "~0.8.29"
     },
     "browser": {
         "fs": false,
@@ -128,7 +128,8 @@
                 "LOCATION_ALWAYS_USAGE_DESCRIPTION": "This app wants to get your location always, even this app runs in background."
             },
             "cordova-plugin-dialogs": {},
-            "cordova-plugin-file": {}
+            "cordova-plugin-file": {},
+            "cordova-plugin-file-transfer": {}
         },
         "platforms": [
             "browser",
