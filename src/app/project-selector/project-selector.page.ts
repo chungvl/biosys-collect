@@ -6,9 +6,6 @@ import { from } from 'rxjs';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { File } from '@ionic-native/file/ngx';
-import { SqliteDbCopy } from '@ionic-native/sqlite-db-copy/ngx';
-import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
-import * as Base64 from 'base-64';
 
 
 @Component({
@@ -23,8 +20,7 @@ export class ProjectSelectorPage implements OnInit {
 
   constructor(private loadingCtrl: LoadingController, private alertController: AlertController,
               private router: Router, public mobileState: MobileService,
-              private transfer: FileTransfer, private file: File,
-              private sqliteDbCopy: SqliteDbCopy, private sqlite: SQLite) {
+              private transfer: FileTransfer, private file: File) {
   }
 
   fileTransfer: FileTransferObject = this.transfer.create();
@@ -84,7 +80,6 @@ export class ProjectSelectorPage implements OnInit {
           // projects should be saved to local storage here:
           // this.mobileState.saveProjects();
 
-          await this.loading.dismiss();
 
           // now iterate through and find mbtiles:
           for (const proj of this.mobileState.projects) {
@@ -102,14 +97,16 @@ export class ProjectSelectorPage implements OnInit {
                 const destinationURL = this.file.documentsDirectory + '/mapdata/'
                 let arrayLength = 0;
                 urlArray.forEach((url, index, arr) => {
+                  // TODO as tiles are stored as ../zoom/y/x.png we need to move this accordingly to the device filesystem - not 100% how
                   this.fileTransfer.download(url, destinationURL).then((entry) => {
                     console.log('download complete: ' + entry.toURL());
                     const progress =  (index / arr.length - 1) * 100;
                     console.log('__Progress: ' + progress + ' % ');
-                    this.setLoadingText(parseInt(progress.toString()) + ' % done');
+                    this.setLoadingText(parseInt(progress.toString()) + ' % downloaded');
                     arrayLength = arrayLength + 1
                     if (arrayLength == arr.length) {
                       // All files downloaded - load map
+                      this.loading.dismiss();
                     }
                   }, (error) => {
                     console.log('download error ' + error);
