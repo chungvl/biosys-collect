@@ -96,17 +96,24 @@ export class ProjectSelectorPage implements OnInit {
               });
 
               if (proj.attributes != null) {
-                const url = proj.attributes.mbtile;
-                console.log('mbtile_url', url);
-                this.fileTransfer.download(url, this.file.documentsDirectory + '/mapdata/' + proj.code + '.mbtile').then((entry) => {
-                  console.log('download complete: ' + entry.toURL());
-                  // copy mbtile file to platform specific location for extraction
-                  this.sqliteDbCopy.copyDbFromStorage(proj.code + '.mbtiles', 0,  entry.toURL(), true).then((success) => {
-                    console.log('DB copied');
-                    this.extractDataBase(proj.code);
-                  }).catch(e => console.log(e));
-                }, (error) => {
-                  console.log('download error ' + error);
+                // TODO this will be the url array with the maltile files
+                const urlArray = proj.attributes.mbtile;
+                console.log('mbtile_url', urlArray);
+                const destinationURL = this.file.documentsDirectory + '/mapdata/'
+                let arrayLength = 0;
+                urlArray.forEach((url, index, arr) => {
+                  this.fileTransfer.download(url, destinationURL).then((entry) => {
+                    console.log('download complete: ' + entry.toURL());
+                    const progress =  (index / arr.length - 1) * 100;
+                    console.log('__Progress: ' + progress + ' % ');
+                    this.setLoadingText(parseInt(progress.toString()) + ' % done');
+                    arrayLength = arrayLength + 1
+                    if (arrayLength == arr.length) {
+                      // All files downloaded - load map
+                    }
+                  }, (error) => {
+                    console.log('download error ' + error);
+                  });
                 });
               }
               // this.file.resolveNativePath()
@@ -124,107 +131,9 @@ export class ProjectSelectorPage implements OnInit {
     return;
   }
 
-  private extractDataBase(dbName: string) {
-    const sqlpromise = this.sqlite.create({ name: dbName + '.mbtiles', location: 'default', createFromLocation: 0 });
-
-    sqlpromise.then((db: SQLiteObject) => {
-      const mapFileLocation = this.file.documentsDirectory + '/mapdata/' + dbName;
-      this.file.createDir(this.file.documentsDirectory, 'mapdata', true).then(() => {
-        this.file.checkDir(this.file.documentsDirectory + '/mapdata/', dbName).then((exists) => {
-          if (exists == true) {
-            console.log('Tile data already copied - loading map');
-            // Ready to load map
-          }
-        }).catch((e) => {
-          console.log('Tile data required to get copied...' + e);
-          this.file.createDir(this.file.documentsDirectory + 'mapdata/', dbName, true).then(() => {
-            db.executeSql('SELECT count(*) AS dbCount FROM tiles', [])
-            .then((resultSet) => {
-              const dbCount = resultSet.rows.item(0).dbCount;
-              const offsetLimit = Math.ceil(dbCount / 1000);
-              this.presentLoading({
-                message: 'Loading map data...'
-              });
-              for(let i = 0; i <= offsetLimit; i++) {
-                console.log('extractTilesToFileSystem ', i);
-                this.extractTilesToFileSystem(db, i * 1000, dbCount, 1000, mapFileLocation);
-              }
-            });
-          });
-        });
-      });
-    });
-  }
-
   setLoadingText(text:string) {
     const elem = document.querySelector(
       "div.loading-wrapper div.loading-content");
       if(elem) elem.innerHTML = text;
-  }
-
-  private extractTilesToFileSystem(db: SQLiteObject, cursor: number, cursorSize: number, limitSize: number, mapFileLocation: string) {
-    db.executeSql('SELECT tile_row AS row, tile_column AS column, zoom_level AS zoom, hex(tile_data) AS data FROM tiles ORDER BY zoom_level, tile_row, tile_column LIMIT ' + limitSize +' OFFSET ' + cursor, [])
-    .then((resultSet) => {
-      console.log('__Current Cursor ' + cursor + ' of '+ cursorSize);
-      const progress =  (cursor / cursorSize) * 100;
-      console.log('__Progress: ' + progress + ' % ');
-      this.setLoadingText(parseInt(progress.toString()) + ' % done');
-      const db_data = resultSet.rows;
-      for(let i = 0; i <= db_data.length; i++){
-        const x = db_data.item(i).column;
-        const y = db_data.item(i).row;
-        const zoom = db_data.item(i).zoom;
-        const newY = (1 << zoom) - y - 1;
-        const blob = db_data.item(i).data;
-        let bString = '';
-        for (let i = 0; i < blob.length; i += 2) {
-          bString += String.fromCharCode( parseInt( blob.substr( i, 2), 16));
-        }
-        const imageData = Base64.encode(bString);
-        const base64ImageData = 'data:image/png;base64,' + imageData;
-        const imageBlob = this.b64toBlob(imageData, 'image/png', 512)
-
-        // TODO: iOS specific folder, probably need changing for Android
-        this.file.writeFile(mapFileLocation, zoom + '-' + x + '-' + newY + '.png', imageBlob, {replace: true})
-        .catch((err) => {
-          console.error(err);
-        })
-      }
-    })
-    .finally(() => {
-      if (cursor >= cursorSize) {
-        console.log('Loading Map');
-        if (this.loading) {
-          this.loading.dismiss();
-        }
-        console.log('Map extracted successfully');
-        // Ready to load map
-      }
-    })
-    .catch(e => console.log(e));
-  }
-
-  private b64toBlob(b64Data, contentType, sliceSize) {
-    contentType = contentType || '';
-    sliceSize = sliceSize || 512;
-
-    var byteCharacters = atob(b64Data);
-    var byteArrays = [];
-
-    for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-      var slice = byteCharacters.slice(offset, offset + sliceSize);
-
-      var byteNumbers = new Array(slice.length);
-      for (var i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-
-      var byteArray = new Uint8Array(byteNumbers);
-
-      byteArrays.push(byteArray);
-    }
-
-    var blob = new Blob(byteArrays, {type: contentType});
-    return blob;
   }
 }
