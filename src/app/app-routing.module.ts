@@ -14,7 +14,6 @@ const routes: Routes = [
   { path: 'form-selector',    loadChildren: './form-selector/form-selector.module#FormSelectorPageModule' },
   { path: 'form-viewer',      loadChildren: './form-viewer/form-viewer.module#FormViewerPageModule' },
   { path: 'site-viewer',      loadChildren: './site-viewer/site-viewer.module#SiteViewerPageModule' },
-  { path: 'site-view',        loadChildren: './site-viewer/site-viewer.module#SiteViewerPageModule' },
   { path: 'upload', loadChildren: './upload/upload.module#UploadPageModule' },
   { path: 'site-add', loadChildren: './site-add/site-add.module#SiteAddPageModule' },
   { path: 'record-list', loadChildren: './record-list/record-list.module#RecordListPageModule' },

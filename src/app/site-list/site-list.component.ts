@@ -1,19 +1,18 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { AlertController, LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { MobileService } from '../shared/services/mobile.service';
 import { Site } from '../biosys-core/interfaces/api.interfaces';
-import { IonTabs } from '@ionic/angular';
 
 @Component({
-  selector: 'app-site-viewer',
-  templateUrl: './site-viewer.page.html',
-  styleUrls: ['./site-viewer.page.scss'],
+  selector: 'app-site-list',
+  templateUrl: './site-list.component.html',
+  styleUrls: ['./site-list.component.scss'],
 })
-export class SiteViewerPage {
+export class SiteListComponent implements OnInit {
   public sites: Site[];
-  @ViewChild('tabs') tabRef: IonTabs;
 
+  ngOnInit() {}
   constructor(private loadingCtrl: LoadingController,
               private alertController: AlertController,
               private router: Router,
@@ -23,7 +22,6 @@ export class SiteViewerPage {
 
   async ionViewWillEnter() {
     this.loadSites();
-    this.tabRef.select('list');
   }
 
   private async loadSites() {

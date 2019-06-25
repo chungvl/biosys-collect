@@ -1,18 +1,39 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Sites {{mobileState.currentProject.name}}</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>Sites {{mobileState.currentProject.name}}</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-virtual-scroll [items]="sites">
-        <ion-item *virtualItem="let item">
-            <ion-label>
-                <h2>{{item.code}}: {{item.name}}</h2>
-                <p>{{item.description}}</p>
-            </ion-label>
-        </ion-item>
-    </ion-virtual-scroll>
+
+    <ion-tabs #tabs>
+        <ion-tab-bar slot="top">
+            <ion-tab-button tab="list">
+                <ion-label>List</ion-label>
+                <ion-icon name="list"></ion-icon>
+            </ion-tab-button>
+            <ion-tab-button tab="map">
+                <ion-label>Map</ion-label>
+                <ion-icon name="map"></ion-icon>
+            </ion-tab-button>
+        </ion-tab-bar>
+    </ion-tabs>
+
+    <!--<ion-tabs>-->
+        <!--<ion-tab title="List" tab="List">-->
+            <!--<ion-virtual-scroll [items]="sites">-->
+                <!--<ion-item *virtualItem="let item">-->
+                    <!--<ion-label>-->
+                        <!--<h2>{{item.code}}: {{item.name}}</h2>-->
+                        <!--<p>{{item.description}}</p>-->
+                    <!--</ion-label>-->
+                <!--</ion-item>-->
+            <!--</ion-virtual-scroll>-->
+        <!--</ion-tab>-->
+
+        <!--<ion-tab title="Map" tab="Map">-->
+        <!--</ion-tab>-->
+    <!--</ion-tabs>-->
 </ion-content>
 
 <ion-footer *ngIf="!mobileState.offline">

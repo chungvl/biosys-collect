@@ -4,17 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
-import { SiteViewerPage } from './site-viewer.page';
+import { SiteListComponent } from './site-list.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SiteViewerPage,
-    children: [
-      { path: 'list', loadChildren: '../site-list/site-list.module#SiteListComponentModule' },
-      { path: 'map', loadChildren: '../site-map/site-map.module#SiteMapComponentModule' }
-    ]
-  },
+    component: SiteListComponent
+  }
 ];
 
 @NgModule({
@@ -24,6 +20,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [SiteViewerPage]
+  declarations: [SiteListComponent]
 })
-export class SiteViewerPageModule {}
+export class SiteListComponentModule {}
