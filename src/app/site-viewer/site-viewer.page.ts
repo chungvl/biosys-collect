@@ -21,6 +21,10 @@ export class SiteViewerPage {
     return;
   }
 
+  public ionicGoBack() {
+    this.router.navigateByUrl('form-selector');
+  }
+
   async ionViewWillEnter() {
     this.loadSites();
     this.tabRef.select('list');

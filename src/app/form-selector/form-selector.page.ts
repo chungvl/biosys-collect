@@ -79,6 +79,11 @@ export class FormSelectorPage implements OnInit {
     return;
   }
 
+  public ionicGoBack() {
+    this.router.navigateByUrl('project-selector');
+  }
+
+
   public dataViewClicked() {
     this.router.navigateByUrl('record-list');
   }
